@@ -1,4 +1,4 @@
-package weiagn.communication;
+package weiagn.encyclopedia;
 
 import groovyx.net.http.AuthConfig
 import groovyx.net.http.HttpResponseDecorator
@@ -14,14 +14,14 @@ import groovyx.net.http.RESTClient
 
 class InformationCollector {
 	
-	static void main(String[] args) {
+	static void loadDataFromApi(apiKey, saveLocation) {
 		def url = "https://api.pathfinder2.fr"
 		def basePath = "/v1/pf2/"
 		RESTClient client = new RESTClient("https://api.pathfinder2.fr")
 		
 		//since the api is scuffed and dosent has a valid certificate we just ignore that
 		client.ignoreSSLIssues()
-		client.setHeaders('Authorization' : args[0])
+		client.setHeaders('Authorization' : apiKey)
 		def response = client.get(path: basePath)
 		for(item in response.responseData) {
 			def	path = item - url
@@ -29,22 +29,21 @@ class InformationCollector {
 			
 			for(data in content.responseData) {
 				if(data.value instanceof ArrayList) {
-					def file = new File(args[1],path - basePath + ".txt").withWriter("utf-8") {  writer ->
+					def file = new File(saveLocation,path - basePath + ".txt")
+					if(!file.exists()) {
+					file.withWriter("utf-8") {  writer ->
 						data.value.each { lazyMap ->
 						 lazyMap.each { key,entry ->
 							 writer.writeLine key as String
 							 writer.writeLine entry as String
-							 writer.writeLine ""
 						  }
 						}
 					}
-					
+				}
 				}
 			}
-		
 		}
 		
 	}
-
 }
 
