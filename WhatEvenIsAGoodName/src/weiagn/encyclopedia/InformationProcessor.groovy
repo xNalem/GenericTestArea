@@ -1,5 +1,7 @@
 package weiagn.encyclopedia
 
+import org.apache.commons.lang3.StringUtils
+
 import groovy.io.FileType
 
 /**
@@ -23,16 +25,16 @@ class InformationProcessor {
 				
 		file.withReader{ reader ->
 			def line
-			String data = ""
-			String name = ""
+			String data = StringUtils.EMPTY
+			String name = StringUtils.EMPTY
 			Boolean dataActive = false
 			Boolean nameActive = false
 		 while ((line = reader.readLine()) != null) { 	
 			
 			if(line == "_id") {
-				if(data != "" && name != "") {
+				if(data != StringUtils.EMPTY && name != StringUtils.EMPTY) {
 					fileContent.put(name, data)}
-				data = name = ""
+				data = name = StringUtils.EMPTY
 				}
 			
 			if(line == "data") {
